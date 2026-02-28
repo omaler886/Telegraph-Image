@@ -87,7 +87,7 @@
 
 ### 限制
 
-1.由于图片文件实际存储于 Telegraph，Telegraph 限制上传的图片大小最大为 5MB
+1.目前图片文件通过 Telegram Bot API 上传并存储于 Telegram，单个文件大小受 Telegram Bot API 限制（通常不超过 50MB，具体以上游 Telegram 官方文档为准）
 
 2.由于使用 Cloudflare 的网络，图片的加载速度在某些地区可能得不到保证
 
