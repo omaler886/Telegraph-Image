@@ -87,7 +87,7 @@ After enabling image review, the first image load will be slow because review ta
 
 ### Limitations
 
-1. Since image files are actually stored on Telegraph, Telegraph limits the size of uploaded images to a maximum of 5MB
+1. Uploaded images are sent via the Telegram Bot API and stored on Telegram's servers. Telegram currently limits files sent by bots to a maximum size of 50MB per file; uploads larger than this will fail
 
 2. Due to the use of Cloudflare's network, image loading speed may not be guaranteed in some regions
 
