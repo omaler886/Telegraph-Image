@@ -208,8 +208,8 @@ Cloudflare KV 每天只有 1000 次的免费写入额度，每有一张新的图
 
 ![](https://im.gurl.eu.org/file/b514467a4b3be0567a76f.png)
 
-### Sponsorship
+### 赞助
 
-This project is tested with BrowserStack.
+本项目由 BrowserStack 提供测试支持。
 
-This project is support by [Cloudflare](https://www.cloudflare.com/).
+本项目由 [Cloudflare](https://www.cloudflare.com/) 提供支持。
