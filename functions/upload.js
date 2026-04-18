@@ -2,6 +2,7 @@ import { errorHandling, telemetryData } from "./utils/middleware";
 
 export async function onRequestPost(context) {
     const { request, env } = context;
+    const TELEGRAM_BOT_FILE_LIMIT = 50 * 1024 * 1024;
 
     try {
         const clonedRequest = request.clone();
@@ -13,6 +14,9 @@ export async function onRequestPost(context) {
         const uploadFile = formData.get('file');
         if (!uploadFile) {
             throw new Error('No file uploaded');
+        }
+        if (typeof uploadFile.size === 'number' && uploadFile.size > TELEGRAM_BOT_FILE_LIMIT) {
+            throw new Error('Bad Request: file is too big (max 50MB)');
         }
 
         const fileName = uploadFile.name;
@@ -104,7 +108,13 @@ async function sendToTelegram(formData, apiEndpoint, env, retryCount = 0) {
 
     try {
         const response = await fetch(apiUrl, { method: "POST", body: formData });
-        const responseData = await response.json();
+        const responseText = await response.text();
+        let responseData = null;
+        try {
+            responseData = responseText ? JSON.parse(responseText) : null;
+        } catch {
+            responseData = null;
+        }
 
         if (response.ok) {
             return { success: true, data: responseData };
@@ -121,7 +131,10 @@ async function sendToTelegram(formData, apiEndpoint, env, retryCount = 0) {
 
         return {
             success: false,
-            error: responseData.description || 'Upload to Telegram failed'
+            error:
+                responseData?.description ||
+                responseData?.error ||
+                `Upload to Telegram failed (HTTP ${response.status})`
         };
     } catch (error) {
         console.error('Network error:', error);
@@ -129,6 +142,9 @@ async function sendToTelegram(formData, apiEndpoint, env, retryCount = 0) {
             await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
             return await sendToTelegram(formData, apiEndpoint, env, retryCount + 1);
         }
-        return { success: false, error: 'Network error occurred' };
+        return {
+            success: false,
+            error: error?.message ? `Network error: ${error.message}` : 'Network error occurred'
+        };
     }
 }
